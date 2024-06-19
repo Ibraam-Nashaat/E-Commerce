@@ -61,7 +61,7 @@ enum OrderStatus {
   Shipped
   Delivered
 }
-// Define the Cart model
+
 model Carts {
   cartId     Int       @id @default(autoincrement())
   userId     Int @unique
