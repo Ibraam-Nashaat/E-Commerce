@@ -1,10 +1,17 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+    ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SignUpDto } from './dto/signup.dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { SignInDto } from './dto/signin.dto';
 
 @Injectable()
 export class AuthService {
@@ -16,8 +23,7 @@ export class AuthService {
 
   async getJwtToken(userId: number, email: string): Promise<{ jwt: string }> {
     const payload = {
-      role: userId,
-      email: email,
+      id: userId,
     };
     const secret = this.config.get('JWT_SECRET');
 
@@ -40,6 +46,7 @@ export class AuthService {
           name: userData.name,
           hashedPassword: hashedPassword,
           address: userData.address,
+          phone: userData.phone
         },
       });
 
@@ -47,10 +54,28 @@ export class AuthService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new ForbiddenException('Email already exists');
+          throw new ConflictException('Email already exists');
         }
       }
       throw error;
     }
+  }
+
+  async signin(userData: SignInDto) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        email: userData.email,
+      },
+    });
+
+    if (!user) throw new NotFoundException('Email not found');
+
+    const pwMatches = await argon.verify(
+      user.hashedPassword,
+      userData.password,
+    );
+
+    if (!pwMatches) throw new UnauthorizedException('Password is incorrect');
+    return this.getJwtToken(user.userId, user.email);
   }
 }

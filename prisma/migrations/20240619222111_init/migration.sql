@@ -6,6 +6,7 @@ CREATE TABLE "Users" (
     "userId" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
     "hashedPassword" TEXT NOT NULL,
     "address" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -66,6 +67,9 @@ CREATE TABLE "CartItems" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Users_email_key" ON "Users"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Users_phone_key" ON "Users"("phone");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Carts_userId_key" ON "Carts"("userId");
