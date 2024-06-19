@@ -20,7 +20,7 @@ model Users {
   email      String    @unique
   phone      String    @unique
   hashedPassword   String
-  address    String?
+  address    String
   created_at DateTime  @default(now())
   cart       Carts?     
   orders     Orders[]
@@ -32,6 +32,7 @@ model Products {
   description String?
   price      Float
   stock      Int
+  category   String
   created_at DateTime  @default(now())
   cartItems  CartItems[]
   orderItems OrderItems[]

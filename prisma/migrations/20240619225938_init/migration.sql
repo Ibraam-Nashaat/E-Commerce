@@ -8,7 +8,7 @@ CREATE TABLE "Users" (
     "email" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "hashedPassword" TEXT NOT NULL,
-    "address" TEXT,
+    "address" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Users_pkey" PRIMARY KEY ("userId")
@@ -21,6 +21,7 @@ CREATE TABLE "Products" (
     "description" TEXT,
     "price" DOUBLE PRECISION NOT NULL,
     "stock" INTEGER NOT NULL,
+    "category" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Products_pkey" PRIMARY KEY ("productId")
