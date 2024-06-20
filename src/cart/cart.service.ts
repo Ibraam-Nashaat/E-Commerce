@@ -69,4 +69,53 @@ export class CartService {
 
     return cartItem;
   }
+
+  async updateCart(
+    productData: AddProductToCartDto,
+    payload: { userId: number },
+  ) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        userId: payload.userId,
+      },
+    });
+
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const product = await this.prisma.products.findUnique({
+      where: {
+        productId: productData.productId,
+      },
+    });
+
+    if (!product) throw new NotFoundException('Product not found');
+
+    const cart = await this.prisma.carts.findUnique({
+      where: {
+        userId: user.userId,
+      },
+    });
+
+    let cartItem = await this.prisma.cartItems.findUnique({
+      where: {
+        cartId_productId: {
+          cartId: cart.cartId,
+          productId: productData.productId,
+        },
+      },
+    });
+
+    cartItem = await this.prisma.cartItems.update({
+      where: {
+        cartId_productId: {
+          cartId: cart.cartId,
+          productId: productData.productId,
+        },
+      },
+      data: {
+        quantity: productData.quantity,
+      },
+    });
+    return cartItem;
+  }
 }

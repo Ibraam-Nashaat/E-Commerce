@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Post,
+  Put,
   Req,
   Request,
   UseGuards,
@@ -18,5 +19,10 @@ export class CartController {
   @Post('/add')
   addToCart(@Body() productData: AddProductToCartDto, @Request() req) {
     return this.cartService.addToCart(productData, req.user);
+  }
+
+  @Put('/update')
+  updateCart(@Body() productData: AddProductToCartDto, @Request() req) {
+    return this.cartService.updateCart(productData, req.user);
   }
 }
