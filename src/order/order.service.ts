@@ -2,8 +2,11 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { OrderStatus } from '@prisma/client';
+import { parse } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -107,5 +110,87 @@ export class OrderService {
     await this.prisma.cartItems.deleteMany({
       where: { cartId: cartItems[0].cartId },
     });
+  }
+
+  async getOrder(orderId: number, payload: { userId: number }) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        userId: payload.userId,
+      },
+    });
+
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const order = await this.prisma.orders.findUnique({
+      where: {
+        orderId: orderId,
+      },
+    });
+
+    if (!order) throw new NotFoundException('No order with this id exists');
+
+    const orderItems = await this.prisma.orderItems.findMany({
+      where: {
+        orderId: orderId,
+      },
+    });
+
+    return {
+      id: orderId,
+      date: order.orderDate,
+      status: order.status,
+      total: order.total,
+      items: orderItems,
+    };
+  }
+
+  async updateOrderStatus(
+    orderId: number,
+    status: string,
+    payload: { userId: number },
+  ) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        userId: payload.userId,
+      },
+    });
+
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const statusEnum = this.parseOrderStatus(status);
+
+    let order;
+    try {
+      order = await this.prisma.orders.update({
+        where: {
+          orderId: orderId,
+        },
+        data: {
+          status: { set: statusEnum },
+        },
+      });
+    } catch (e) {
+      throw new NotFoundException('No order with this id exists');
+    }
+
+    return {
+      id: orderId,
+      date: order.orderDate,
+      status: order.status,
+      total: order.total,
+    };
+  }
+
+  private parseOrderStatus(statusString: string): OrderStatus {
+    switch (statusString.toLocaleLowerCase()) {
+      case 'pending':
+        return 'Pending';
+      case 'shipped':
+        return 'Shipped';
+      case 'delivered':
+        return 'Delivered';
+      default:
+        throw new BadRequestException(`Invalid status: ${statusString}`);
+    }
   }
 }
