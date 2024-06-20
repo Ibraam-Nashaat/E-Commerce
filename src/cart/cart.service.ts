@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -30,6 +31,7 @@ export class CartService {
     });
 
     if (!product) throw new NotFoundException('Product not found');
+
 
     const cart = await this.prisma.carts.findUnique({
       where: {
@@ -90,6 +92,7 @@ export class CartService {
     });
 
     if (!product) throw new NotFoundException('Product not found');
+
 
     const cart = await this.prisma.carts.findUnique({
       where: {
