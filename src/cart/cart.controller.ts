@@ -1,15 +1,17 @@
 import {
   Body,
   Controller,
+  Delete,
   Post,
   Put,
   Req,
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { AddProductToCartDto } from './dto/addProductToCart.dto';
+import { AddOrUpdateProductDto } from './dto/addOrUpdateProduct.dto';
 import { CartService } from './cart.service';
 import { AuthGuard } from '@nestjs/passport';
+import { RemoveProductFromCartDto } from './dto/removeProductFromCart.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('api/cart')
@@ -17,12 +19,17 @@ export class CartController {
   constructor(private cartService: CartService) {}
 
   @Post('/add')
-  addToCart(@Body() productData: AddProductToCartDto, @Request() req) {
+  addToCart(@Body() productData: AddOrUpdateProductDto, @Request() req) {
     return this.cartService.addToCart(productData, req.user);
   }
 
   @Put('/update')
-  updateCart(@Body() productData: AddProductToCartDto, @Request() req) {
+  updateCart(@Body() productData: AddOrUpdateProductDto, @Request() req) {
     return this.cartService.updateCart(productData, req.user);
+  }
+
+  @Delete('/remove')
+  removeProductFromCart(@Body() productData: RemoveProductFromCartDto, @Request() req) {
+    return this.cartService.removeProductFromCart(productData, req.user);
   }
 }

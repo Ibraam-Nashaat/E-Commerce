@@ -1,11 +1,7 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class AddProductToCartDto {
+export class RemoveProductFromCartDto {
   @IsNotEmpty()
   @IsNumber()
   productId: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  quantity: number;
 }
