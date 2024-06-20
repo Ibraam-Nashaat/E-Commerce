@@ -1,5 +1,5 @@
 import {
-    ConflictException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -46,7 +46,13 @@ export class AuthService {
           name: userData.name,
           hashedPassword: hashedPassword,
           address: userData.address,
-          phone: userData.phone
+          phone: userData.phone,
+        },
+      });
+
+      await this.prisma.carts.create({
+        data: {
+          userId: user.userId,
         },
       });
 
