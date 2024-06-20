@@ -122,7 +122,10 @@ export class CartService {
     return cartItem;
   }
 
-  async removeProductFromCart(productData: RemoveProductFromCartDto, payload: { userId: number }) {
+  async removeProductFromCart(
+    productData: RemoveProductFromCartDto,
+    payload: { userId: number },
+  ) {
     const user = await this.prisma.users.findUnique({
       where: {
         userId: payload.userId,
@@ -157,5 +160,29 @@ export class CartService {
     });
 
     return { status: 'Product removed from cart successfully' };
+  }
+
+  async getCartItems(payload: { userId: number }) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        userId: payload.userId,
+      },
+    });
+
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const cart = await this.prisma.carts.findUnique({
+      where: {
+        userId: user.userId,
+      },
+    });
+
+    let cartItems = await this.prisma.cartItems.findMany({
+      where: {
+        cartId: cart.cartId,
+      },
+    });
+
+    return cartItems;
   }
 }
