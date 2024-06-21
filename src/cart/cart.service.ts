@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddOrUpdateProductDto } from './dto/addOrUpdateProduct.dto';
-import { Users } from '@prisma/client';
 import { RemoveProductFromCartDto } from './dto/removeProductFromCart.dto';
 
 @Injectable()
@@ -16,14 +15,6 @@ export class CartService {
     productData: AddOrUpdateProductDto,
     userId: number,
   ) {
-    const user = await this.prisma.users.findUnique({
-      where: {
-        userId: userId,
-      },
-    });
-
-    if (!user) throw new UnauthorizedException('User not found');
-
     const product = await this.prisma.products.findUnique({
       where: {
         productId: productData.productId,
@@ -35,7 +26,7 @@ export class CartService {
 
     const cart = await this.prisma.carts.findUnique({
       where: {
-        userId: user.userId,
+        userId: userId,
       },
     });
 
@@ -77,14 +68,6 @@ export class CartService {
     productData: AddOrUpdateProductDto,
     userId: number,
   ) {
-    const user = await this.prisma.users.findUnique({
-      where: {
-        userId: userId,
-      },
-    });
-
-    if (!user) throw new UnauthorizedException('User not found');
-
     const product = await this.prisma.products.findUnique({
       where: {
         productId: productData.productId,
@@ -96,7 +79,7 @@ export class CartService {
 
     const cart = await this.prisma.carts.findUnique({
       where: {
-        userId: user.userId,
+        userId: userId,
       },
     });
 
@@ -129,17 +112,9 @@ export class CartService {
     productData: RemoveProductFromCartDto,
     userId: number,
   ) {
-    const user = await this.prisma.users.findUnique({
-      where: {
-        userId: userId,
-      },
-    });
-
-    if (!user) throw new UnauthorizedException('User not found');
-
     const cart = await this.prisma.carts.findUnique({
       where: {
-        userId: user.userId,
+        userId: userId,
       },
     });
 
@@ -166,17 +141,9 @@ export class CartService {
   }
 
   async getCartItems(userId: number) {
-    const user = await this.prisma.users.findUnique({
-      where: {
-        userId: userId,
-      },
-    });
-
-    if (!user) throw new UnauthorizedException('User not found');
-
     const cart = await this.prisma.carts.findUnique({
       where: {
-        userId: user.userId,
+        userId: userId,
       },
     });
 

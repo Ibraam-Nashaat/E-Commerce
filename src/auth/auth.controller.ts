@@ -10,13 +10,11 @@ import { ApiTags } from '@nestjs/swagger';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @HttpCode(HttpStatus.CREATED)
   @Post('signup')
   signUp(@Body() userData: SignUpDto) {
     return this.authService.signup(userData);
   }
 
-  @HttpCode(HttpStatus.OK)
   @Post('signin')
   signIn(@Body() userData: SignInDto) 
   {

@@ -17,14 +17,6 @@ export class OrderService {
     orderId: number,
     userId: number,
   ) {
-    const user = await this.prisma.users.findUnique({
-      where: {
-        userId: userId,
-      },
-    });
-
-    if (!user) throw new UnauthorizedException('User not found');
-
     const couponData = await this.prisma.coupons.findUnique({
       where: {
         coupon: coupon,
@@ -54,17 +46,9 @@ export class OrderService {
   }
 
   async getOrdersHistory(userId: number) {
-    const user = await this.prisma.users.findUnique({
-      where: {
-        userId: userId,
-      },
-    });
-
-    if (!user) throw new UnauthorizedException('User not found');
-
     const orders = await this.prisma.orders.findMany({
       where: {
-        userId: user.userId,
+        userId: userId,
       },
     });
 
@@ -101,17 +85,9 @@ export class OrderService {
   }
 
   async createOrder(userId: number) {
-    const user = await this.prisma.users.findUnique({
-      where: {
-        userId: userId,
-      },
-    });
-
-    if (!user) throw new UnauthorizedException('User not found');
-
     const cart = await this.prisma.carts.findUnique({
       where: {
-        userId: user.userId,
+        userId: userId,
       },
     });
 
@@ -125,7 +101,7 @@ export class OrderService {
       throw new BadRequestException("Can't create order from empty cart");
 
     const productMap = await this.checkForStockMismatch(cartItems);
-    await this.addOrderItems(cartItems, productMap, user.userId);
+    await this.addOrderItems(cartItems, productMap, userId);
   }
 
   private async checkForStockMismatch(cartItems) {
@@ -199,15 +175,7 @@ export class OrderService {
     });
   }
 
-  async getOrder(orderId: number, userId: number) {
-    const user = await this.prisma.users.findUnique({
-      where: {
-        userId: userId,
-      },
-    });
-
-    if (!user) throw new UnauthorizedException('User not found');
-
+  async getOrder(orderId: number) {
     const order = await this.prisma.orders.findUnique({
       where: {
         orderId: orderId,
@@ -234,16 +202,7 @@ export class OrderService {
   async updateOrderStatus(
     orderId: number,
     status: string,
-    userId: number,
   ) {
-    const user = await this.prisma.users.findUnique({
-      where: {
-        userId: userId,
-      },
-    });
-
-    if (!user) throw new UnauthorizedException('User not found');
-
     const statusEnum = this.parseOrderStatus(status);
 
     let order;

@@ -37,7 +37,7 @@ export class OrderController {
 
   @Get('orders/:orderId')
   getOrder(@Param('orderId') orderId: string, @Request() req) {
-    return this.orderService.getOrder(Number(orderId), req.user.userId);
+    return this.orderService.getOrder(Number(orderId));
   }
 
   @Put('orders/:orderId/status')
@@ -49,7 +49,6 @@ export class OrderController {
     return this.orderService.updateOrderStatus(
       Number(orderId),
       status.status,
-      req.user.userId,
     );
   }
 }
