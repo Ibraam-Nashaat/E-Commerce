@@ -59,8 +59,15 @@ export class AuthService {
       return this.getJwtToken(user.userId, user.email);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException('Email already exists');
+        if (error.code === 'P2002' && error.meta?.target) {
+          const target = error.meta.target as string[];
+
+          if (target.includes('email')) {
+            throw new ConflictException('Email already exists');
+          }
+          if (target.includes('phone')) {
+            throw new ConflictException('Phone number already exists');
+          }
         }
       }
       throw error;

@@ -13,6 +13,53 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class OrderService {
   constructor(private prisma: PrismaService) {}
 
+  async getOrdersHistory(payload: { userId: number }) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        userId: payload.userId,
+      },
+    });
+
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const orders = await this.prisma.orders.findMany({
+      where: {
+        userId: user.userId,
+      },
+    });
+
+    const ordersIds = orders.map((order) => order.orderId);
+
+    const ordersItemsList = await this.prisma.orderItems.findMany({
+      where: {
+        orderId: {
+          in: ordersIds,
+        },
+      },
+    });
+
+    let ordersHistory = {};
+    for (let i = 0; i < orders.length; i++) {
+      ordersHistory[orders[i].orderId] = {
+        orderId: orders[i].orderId,
+        date: orders[i].orderDate,
+        status: orders[i].status,
+        total: orders[i].total,
+        items: [],
+      };
+    }
+
+    for (let i = 0; i < ordersItemsList.length; i++) {
+      ordersHistory[ordersItemsList[i].orderId].items.push({
+        productId: ordersItemsList[i].productId,
+        quantity: ordersItemsList[i].quantity,
+        price: ordersItemsList[i].price,
+      });
+    }
+
+    return Object.values(ordersHistory);
+  }
+
   async createOrder(payload: { userId: number }) {
     const user = await this.prisma.users.findUnique({
       where: {

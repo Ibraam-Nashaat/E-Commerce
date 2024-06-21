@@ -13,21 +13,26 @@ import { AuthGuard } from '@nestjs/passport';
 import { OrderStatus } from '@prisma/client';
 
 @UseGuards(AuthGuard('jwt'))
-@Controller('api/orders')
+@Controller('api')
 export class OrderController {
   constructor(private orderService: OrderService) {}
 
-  @Post()
+  @Get('/users/orders')
+  getOrdersHistory(@Request() req) {
+    return this.orderService.getOrdersHistory(req.user);
+  }
+
+  @Post('orders')
   createOrder(@Request() req) {
     return this.orderService.createOrder(req.user);
   }
 
-  @Get(':orderId')
+  @Get('orders/:orderId')
   getOrder(@Param('orderId') orderId: string, @Request() req) {
     return this.orderService.getOrder(Number(orderId), req.user);
   }
 
-  @Put(':orderId/status')
+  @Put('orders/:orderId/status')
   updateOrderStatus(
     @Param('orderId') orderId: string,
     @Body('status') status: string,
