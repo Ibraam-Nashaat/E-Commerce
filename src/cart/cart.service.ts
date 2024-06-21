@@ -137,7 +137,6 @@ export class CartService {
       },
     });
 
-    return { status: 'Product removed from cart successfully' };
   }
 
   async getCartItems(userId: number) {

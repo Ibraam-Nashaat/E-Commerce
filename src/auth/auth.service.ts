@@ -63,10 +63,10 @@ export class AuthService {
           const target = error.meta.target as string[];
 
           if (target.includes('email')) {
-            throw new ConflictException('Email already exists');
+            throw new ConflictException('email already exists');
           }
           if (target.includes('phone')) {
-            throw new ConflictException('Phone number already exists');
+            throw new ConflictException('phone number already exists');
           }
         }
       }
@@ -81,14 +81,14 @@ export class AuthService {
       },
     });
 
-    if (!user) throw new NotFoundException('Email not found');
+    if (!user) throw new NotFoundException('email not found');
 
     const pwMatches = await argon.verify(
       user.hashedPassword,
       userData.password,
     );
 
-    if (!pwMatches) throw new UnauthorizedException('Password is incorrect');
+    if (!pwMatches) throw new UnauthorizedException('password is incorrect');
     return this.getJwtToken(user.userId, user.email);
   }
 }

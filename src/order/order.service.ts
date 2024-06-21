@@ -15,7 +15,6 @@ export class OrderService {
   async applyCoupon(
     coupon: string,
     orderId: number,
-    userId: number,
   ) {
     const couponData = await this.prisma.coupons.findUnique({
       where: {
@@ -23,7 +22,7 @@ export class OrderService {
       },
     });
 
-    if (!couponData) throw new NotFoundException('Coupon not found');
+    if (!couponData) throw new NotFoundException('coupon not found');
 
     const order = await this.prisma.orders.findUnique({
       where: {
@@ -31,7 +30,7 @@ export class OrderService {
       },
     });
 
-    if (!order) throw new NotFoundException('No order exists with this id');
+    if (!order) throw new NotFoundException('no order exists with this id');
 
     const updatedOrder = await this.prisma.orders.update({
       where: {
