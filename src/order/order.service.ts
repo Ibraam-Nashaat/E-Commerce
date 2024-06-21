@@ -6,12 +6,52 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { OrderStatus } from '@prisma/client';
-import { parse } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class OrderService {
   constructor(private prisma: PrismaService) {}
+
+  async applyCoupon(
+    coupon: string,
+    orderId: number,
+    payload: { userId: number },
+  ) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        userId: payload.userId,
+      },
+    });
+
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const couponData = await this.prisma.coupons.findUnique({
+      where: {
+        coupon: coupon,
+      },
+    });
+
+    if (!couponData) throw new NotFoundException('Coupon not found');
+
+    const order = await this.prisma.orders.findUnique({
+      where: {
+        orderId: orderId,
+      },
+    });
+
+    if (!order) throw new NotFoundException('No order exists with this id');
+
+    const updatedOrder = await this.prisma.orders.update({
+      where: {
+        orderId: orderId,
+      },
+      data: {
+        total: Math.max(order.total - couponData.discount, 0),
+      },
+    });
+
+    return updatedOrder;
+  }
 
   async getOrdersHistory(payload: { userId: number }) {
     const user = await this.prisma.users.findUnique({

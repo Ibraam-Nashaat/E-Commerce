@@ -81,6 +81,11 @@ model CartItems{
   product    Products   @relation(fields: [productId], references: [productId])
 }
 
+model Coupons{
+  couponId     Int       @id @default(autoincrement())
+  coupon       String    @unique 
+  discount     Float     
+}
 
 
 

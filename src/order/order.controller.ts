@@ -10,12 +10,17 @@ import {
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { AuthGuard } from '@nestjs/passport';
-import { OrderStatus } from '@prisma/client';
+import { ApplyCouponDto } from './dto/applyCoupon.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('api')
 export class OrderController {
   constructor(private orderService: OrderService) {}
+
+  @Post('/orders/apply-coupon')
+  applyCoupon(@Request() req, @Body() data: ApplyCouponDto) {
+    return this.orderService.applyCoupon(data.coupon, data.orderId, req.user);
+  }
 
   @Get('/users/orders')
   getOrdersHistory(@Request() req) {

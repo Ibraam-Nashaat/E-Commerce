@@ -66,6 +66,15 @@ CREATE TABLE "CartItems" (
     CONSTRAINT "CartItems_pkey" PRIMARY KEY ("cartId","productId")
 );
 
+-- CreateTable
+CREATE TABLE "Coupons" (
+    "couponId" SERIAL NOT NULL,
+    "coupon" TEXT NOT NULL,
+    "discount" DOUBLE PRECISION NOT NULL,
+
+    CONSTRAINT "Coupons_pkey" PRIMARY KEY ("couponId")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Users_email_key" ON "Users"("email");
 
@@ -74,6 +83,9 @@ CREATE UNIQUE INDEX "Users_phone_key" ON "Users"("phone");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Carts_userId_key" ON "Carts"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Coupons_coupon_key" ON "Coupons"("coupon");
 
 -- AddForeignKey
 ALTER TABLE "Orders" ADD CONSTRAINT "Orders_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
