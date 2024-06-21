@@ -15,11 +15,11 @@ export class OrderService {
   async applyCoupon(
     coupon: string,
     orderId: number,
-    payload: { userId: number },
+    userId: number,
   ) {
     const user = await this.prisma.users.findUnique({
       where: {
-        userId: payload.userId,
+        userId: userId,
       },
     });
 
@@ -53,10 +53,10 @@ export class OrderService {
     return updatedOrder;
   }
 
-  async getOrdersHistory(payload: { userId: number }) {
+  async getOrdersHistory(userId: number) {
     const user = await this.prisma.users.findUnique({
       where: {
-        userId: payload.userId,
+        userId: userId,
       },
     });
 
@@ -100,10 +100,10 @@ export class OrderService {
     return Object.values(ordersHistory);
   }
 
-  async createOrder(payload: { userId: number }) {
+  async createOrder(userId: number) {
     const user = await this.prisma.users.findUnique({
       where: {
-        userId: payload.userId,
+        userId: userId,
       },
     });
 
@@ -199,10 +199,10 @@ export class OrderService {
     });
   }
 
-  async getOrder(orderId: number, payload: { userId: number }) {
+  async getOrder(orderId: number, userId: number) {
     const user = await this.prisma.users.findUnique({
       where: {
-        userId: payload.userId,
+        userId: userId,
       },
     });
 
@@ -234,11 +234,11 @@ export class OrderService {
   async updateOrderStatus(
     orderId: number,
     status: string,
-    payload: { userId: number },
+    userId: number,
   ) {
     const user = await this.prisma.users.findUnique({
       where: {
-        userId: payload.userId,
+        userId: userId,
       },
     });
 

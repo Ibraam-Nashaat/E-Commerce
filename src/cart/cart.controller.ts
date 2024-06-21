@@ -23,17 +23,17 @@ export class CartController {
 
   @Get()
   getCartItems(@Request() req) {
-    return this.cartService.getCartItems(req.user);
+    return this.cartService.getCartItems(req.user.userId);
   }
   
   @Post('/add')
   addToCart(@Body() productData: AddOrUpdateProductDto, @Request() req) {
-    return this.cartService.addToCart(productData, req.user);
+    return this.cartService.addToCart(productData, req.user.userId);
   }
 
   @Put('/update')
   updateCart(@Body() productData: AddOrUpdateProductDto, @Request() req) {
-    return this.cartService.updateCart(productData, req.user);
+    return this.cartService.updateCart(productData, req.user.userId);
   }
 
   @Delete('/remove')
@@ -41,6 +41,6 @@ export class CartController {
     @Body() productData: RemoveProductFromCartDto,
     @Request() req,
   ) {
-    return this.cartService.removeProductFromCart(productData, req.user);
+    return this.cartService.removeProductFromCart(productData, req.user.userId);
   }
 }

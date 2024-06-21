@@ -22,22 +22,22 @@ export class OrderController {
 
   @Post('/orders/apply-coupon')
   applyCoupon(@Request() req, @Body() data: ApplyCouponDto) {
-    return this.orderService.applyCoupon(data.coupon, data.orderId, req.user);
+    return this.orderService.applyCoupon(data.coupon, data.orderId, req.user.userId);
   }
 
   @Get('/users/orders')
   getOrdersHistory(@Request() req) {
-    return this.orderService.getOrdersHistory(req.user);
+    return this.orderService.getOrdersHistory(req.user.userId);
   }
 
   @Post('orders')
   createOrder(@Request() req) {
-    return this.orderService.createOrder(req.user);
+    return this.orderService.createOrder(req.user.userId);
   }
 
   @Get('orders/:orderId')
   getOrder(@Param('orderId') orderId: string, @Request() req) {
-    return this.orderService.getOrder(Number(orderId), req.user);
+    return this.orderService.getOrder(Number(orderId), req.user.userId);
   }
 
   @Put('orders/:orderId/status')
@@ -49,7 +49,7 @@ export class OrderController {
     return this.orderService.updateOrderStatus(
       Number(orderId),
       status.status,
-      req.user,
+      req.user.userId,
     );
   }
 }

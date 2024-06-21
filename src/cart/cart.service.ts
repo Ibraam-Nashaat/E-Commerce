@@ -14,11 +14,11 @@ export class CartService {
   constructor(private prisma: PrismaService) {}
   async addToCart(
     productData: AddOrUpdateProductDto,
-    payload: { userId: number },
+    userId: number,
   ) {
     const user = await this.prisma.users.findUnique({
       where: {
-        userId: payload.userId,
+        userId: userId,
       },
     });
 
@@ -75,11 +75,11 @@ export class CartService {
 
   async updateCart(
     productData: AddOrUpdateProductDto,
-    payload: { userId: number },
+    userId: number,
   ) {
     const user = await this.prisma.users.findUnique({
       where: {
-        userId: payload.userId,
+        userId: userId,
       },
     });
 
@@ -127,11 +127,11 @@ export class CartService {
 
   async removeProductFromCart(
     productData: RemoveProductFromCartDto,
-    payload: { userId: number },
+    userId: number,
   ) {
     const user = await this.prisma.users.findUnique({
       where: {
-        userId: payload.userId,
+        userId: userId,
       },
     });
 
@@ -165,10 +165,10 @@ export class CartService {
     return { status: 'Product removed from cart successfully' };
   }
 
-  async getCartItems(payload: { userId: number }) {
+  async getCartItems(userId: number) {
     const user = await this.prisma.users.findUnique({
       where: {
-        userId: payload.userId,
+        userId: userId,
       },
     });
 
