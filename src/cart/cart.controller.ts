@@ -13,7 +13,9 @@ import { AddOrUpdateProductDto } from './dto/addOrUpdateProduct.dto';
 import { CartService } from './cart.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RemoveProductFromCartDto } from './dto/removeProductFromCart.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Carts')
 @UseGuards(AuthGuard('jwt'))
 @Controller('api/cart')
 export class CartController {

@@ -11,7 +11,10 @@ import {
 import { OrderService } from './order.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApplyCouponDto } from './dto/applyCoupon.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { UpdateOrderStatusDto } from './dto/updateOrderStatus.dto';
 
+@ApiTags('Orders')
 @UseGuards(AuthGuard('jwt'))
 @Controller('api')
 export class OrderController {
@@ -40,12 +43,12 @@ export class OrderController {
   @Put('orders/:orderId/status')
   updateOrderStatus(
     @Param('orderId') orderId: string,
-    @Body('status') status: string,
+    @Body() status: UpdateOrderStatusDto,
     @Request() req,
   ) {
     return this.orderService.updateOrderStatus(
       Number(orderId),
-      status,
+      status.status,
       req.user,
     );
   }
