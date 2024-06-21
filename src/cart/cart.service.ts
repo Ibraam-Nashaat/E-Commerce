@@ -7,22 +7,19 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddOrUpdateProductDto } from './dto/addOrUpdateProduct.dto';
 import { RemoveProductFromCartDto } from './dto/removeProductFromCart.dto';
+import { CartErrors } from './errors';
 
 @Injectable()
 export class CartService {
   constructor(private prisma: PrismaService) {}
-  async addToCart(
-    productData: AddOrUpdateProductDto,
-    userId: number,
-  ) {
+  async addToCart(productData: AddOrUpdateProductDto, userId: number) {
     const product = await this.prisma.products.findUnique({
       where: {
         productId: productData.productId,
       },
     });
 
-    if (!product) throw new NotFoundException('Product not found');
-
+    if (!product) throw new NotFoundException(CartErrors.productNotFoundError);
 
     const cart = await this.prisma.carts.findUnique({
       where: {
@@ -64,18 +61,14 @@ export class CartService {
     return cartItem;
   }
 
-  async updateCart(
-    productData: AddOrUpdateProductDto,
-    userId: number,
-  ) {
+  async updateCart(productData: AddOrUpdateProductDto, userId: number) {
     const product = await this.prisma.products.findUnique({
       where: {
         productId: productData.productId,
       },
     });
 
-    if (!product) throw new NotFoundException('Product not found');
-
+    if (!product) throw new NotFoundException(CartErrors.productNotFoundError);
 
     const cart = await this.prisma.carts.findUnique({
       where: {
@@ -92,7 +85,8 @@ export class CartService {
       },
     });
 
-    if (!cartItem) throw new NotFoundException('Product not found in cart');
+    if (!cartItem)
+      throw new NotFoundException(CartErrors.productNotFoundInCartError);
     cartItem = await this.prisma.cartItems.update({
       where: {
         cartId_productId: {
@@ -127,7 +121,8 @@ export class CartService {
       },
     });
 
-    if (!cartItem) throw new NotFoundException('Product not found in cart');
+    if (!cartItem)
+      throw new NotFoundException(CartErrors.productNotFoundInCartError);
     cartItem = await this.prisma.cartItems.delete({
       where: {
         cartId_productId: {
@@ -136,7 +131,6 @@ export class CartService {
         },
       },
     });
-
   }
 
   async getCartItems(userId: number) {

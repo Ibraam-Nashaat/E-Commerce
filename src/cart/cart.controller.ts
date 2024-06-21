@@ -22,6 +22,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { CartErrors } from './errors';
 
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: 'unauthorized' })
@@ -41,14 +42,14 @@ export class CartController {
 
   @ApiBadRequestResponse({
     description: [
-      'productId must be a number conforming to the specified constraints',
-      'productId should not be empty',
-      'quantity must be a number conforming to the specified constraints',
-      'quantity should not be empty',
+      CartErrors.productIdIsNotNumberError,
+      CartErrors.productIdIsEmptyError,
+      CartErrors.quantityIsNotNumberError,
+      CartErrors.quantityIsEmptyError,
     ].join('<br>'),
   })
   @ApiNotFoundResponse({
-    description: 'Product not found',
+    description: CartErrors.productNotFoundError,
   })
   @ApiCreatedResponse({
     description: 'product added to cart successfully',
@@ -60,16 +61,17 @@ export class CartController {
 
   @ApiBadRequestResponse({
     description: [
-      'productId must be a number conforming to the specified constraints',
-      'productId should not be empty',
-      'quantity must be a number conforming to the specified constraints',
-      'quantity should not be empty',
+      CartErrors.productIdIsNotNumberError,
+      CartErrors.productIdIsEmptyError,
+      CartErrors.quantityIsNotNumberError,
+      CartErrors.quantityIsEmptyError,
     ].join('<br>'),
   })
   @ApiNotFoundResponse({
-    description: ['Product not found', 'Product not found in cart'].join(
-      '<br>',
-    ),
+    description: [
+      CartErrors.productNotFoundError,
+      CartErrors.productNotFoundInCartError,
+    ].join('<br>'),
   })
   @ApiOkResponse({ description: 'cart updated successfully' })
   @Put('/update')
@@ -79,12 +81,12 @@ export class CartController {
 
   @ApiBadRequestResponse({
     description: [
-      'productId must be a number conforming to the specified constraints',
-      'productId should not be empty',
+      CartErrors.productIdIsEmptyError,
+      CartErrors.productIdIsNotNumberError,
     ].join('<br>'),
   })
   @ApiNotFoundResponse({
-    description: 'Product not found in cart',
+    description: CartErrors.productNotFoundInCartError,
   })
   @ApiOkResponse({
     description: 'product removed from cart successfully',
