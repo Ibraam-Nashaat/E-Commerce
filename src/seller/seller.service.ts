@@ -6,7 +6,7 @@ import { Coupons } from '@prisma/client';
 import { SellerErrors } from './errors/seller.errors';
 
 @Injectable()
-export class ProductService {
+export class SellerService {
   constructor(private prisma: PrismaService) {}
   async addProduct(productData: AddProductDto) {
     const product = await this.prisma.products.create({

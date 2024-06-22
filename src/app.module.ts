@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { ProductModule } from './product/product.module';
+import { SellerModule } from './seller/seller.module';
 import { CartModule } from './cart/cart.module';
 import { OrderModule } from './order/order.module';
 
@@ -15,7 +15,7 @@ import { OrderModule } from './order/order.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    ProductModule,
+    SellerModule,
     CartModule,
     OrderModule,
   ],

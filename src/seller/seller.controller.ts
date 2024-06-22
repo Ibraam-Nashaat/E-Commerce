@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AddProductDto } from './dto/addProduct.dto';
-import { ProductService } from './product.service';
+import { SellerService } from './seller.service';
 import { AddCouponDto } from './dto/addCoupon.dto';
 import {
   ApiBadRequestResponse,
@@ -12,8 +12,8 @@ import { SellerErrors } from './errors/seller.errors';
 
 @ApiTags('Sellers')
 @Controller('api/')
-export class ProductController {
-  constructor(private productService: ProductService) {}
+export class SellerController {
+  constructor(private sellerService: SellerService) {}
 
   @ApiBadRequestResponse({
     description: [
@@ -32,7 +32,7 @@ export class ProductController {
   @ApiCreatedResponse({ description: 'product added successfully' })
   @Post('products/add')
   addProduct(@Body() productData: AddProductDto) {
-    return this.productService.addProduct(productData);
+    return this.sellerService.addProduct(productData);
   }
 
   @ApiConflictResponse({
@@ -51,6 +51,6 @@ export class ProductController {
   })
   @Post('coupons/add')
   addCoupon(@Body() couponData: AddCouponDto) {
-    return this.productService.addCoupon(couponData);
+    return this.sellerService.addCoupon(couponData);
   }
 }
