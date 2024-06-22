@@ -38,7 +38,7 @@ export class CartController {
     type: GetCartItemsResponseDto,
     isArray: true,
   })
-  @Get()
+  @Get('/:userId')
   getCartItems(@Request() req) {
     return this.cartService.getCartItems(req.user.userId);
   }
