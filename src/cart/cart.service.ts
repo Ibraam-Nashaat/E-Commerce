@@ -7,7 +7,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddOrUpdateProductDto } from './dto/addOrUpdateProduct.dto';
 import { RemoveProductFromCartDto } from './dto/removeProductFromCart.dto';
-import { CartErrors } from './errors';
+import { CartErrors } from './errors/cart.errors';
 
 @Injectable()
 export class CartService {
@@ -19,7 +19,7 @@ export class CartService {
       },
     });
 
-    if (!product) throw new NotFoundException(CartErrors.productNotFoundError);
+    if (!product) throw new NotFoundException(CartErrors.productNotFound);
 
     const cart = await this.prisma.carts.findUnique({
       where: {
@@ -68,7 +68,7 @@ export class CartService {
       },
     });
 
-    if (!product) throw new NotFoundException(CartErrors.productNotFoundError);
+    if (!product) throw new NotFoundException(CartErrors.productNotFound);
 
     const cart = await this.prisma.carts.findUnique({
       where: {
@@ -86,7 +86,7 @@ export class CartService {
     });
 
     if (!cartItem)
-      throw new NotFoundException(CartErrors.productNotFoundInCartError);
+      throw new NotFoundException(CartErrors.productNotFoundInCart);
     cartItem = await this.prisma.cartItems.update({
       where: {
         cartId_productId: {
@@ -122,7 +122,7 @@ export class CartService {
     });
 
     if (!cartItem)
-      throw new NotFoundException(CartErrors.productNotFoundInCartError);
+      throw new NotFoundException(CartErrors.productNotFoundInCart);
     cartItem = await this.prisma.cartItems.delete({
       where: {
         cartId_productId: {

@@ -22,6 +22,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { UpdateOrderStatusDto } from './dto/updateOrderStatus.dto';
+import { OrderErrors } from './errors/order.errors';
 
 @ApiUnauthorizedResponse({ description: 'unauthorized' })
 @ApiBearerAuth()
@@ -32,7 +33,7 @@ export class OrderController {
   constructor(private orderService: OrderService) {}
 
   @ApiNotFoundResponse({
-    description: ['coupon not found', 'no order exists with this id'].join(
+    description: [OrderErrors.couponNotFound, OrderErrors.orderIdNotFound].join(
       '<br>',
     ),
   })
@@ -51,10 +52,10 @@ export class OrderController {
   }
 
   @ApiBadRequestResponse({
-    description: "Can't create order from empty cart",
+    description: OrderErrors.emptyCart,
   })
   @ApiConflictResponse({
-    description: 'One or more items exceed available stock.',
+    description: OrderErrors.cartItemsExceedStock,
   })
   @ApiCreatedResponse({ description: 'order created successfully' })
   @Post('orders')
@@ -63,7 +64,7 @@ export class OrderController {
   }
 
   @ApiNotFoundResponse({
-    description: 'No order with this id exists',
+    description: OrderErrors.orderIdNotFound,
   })
   @ApiOkResponse({ description: 'order was retrieved successfully' })
   @Get('orders/:orderId')
@@ -72,8 +73,9 @@ export class OrderController {
   }
 
   @ApiNotFoundResponse({
-    description: 'No order with this id exists',
+    description: OrderErrors.orderIdNotFound,
   })
+  @ApiBadRequestResponse({ description: OrderErrors.invalidOrderStatus })
   @ApiOkResponse({ description: 'order status updated successfully' })
   @Put('orders/:orderId/status')
   updateOrderStatus(

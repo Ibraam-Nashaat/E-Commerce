@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -12,6 +11,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { SignInDto } from './dto/signin.dto';
+import { AuthErrors } from './errors/auth.errors';
 
 @Injectable()
 export class AuthService {
@@ -63,10 +63,10 @@ export class AuthService {
           const target = error.meta.target as string[];
 
           if (target.includes('email')) {
-            throw new ConflictException('email already exists');
+            throw new ConflictException(AuthErrors.emailExists);
           }
           if (target.includes('phone')) {
-            throw new ConflictException('phone number already exists');
+            throw new ConflictException(AuthErrors.phoneNumberExists);
           }
         }
       }
@@ -81,14 +81,15 @@ export class AuthService {
       },
     });
 
-    if (!user) throw new NotFoundException('email not found');
+    if (!user) throw new NotFoundException(AuthErrors.emailNotFound);
 
     const pwMatches = await argon.verify(
       user.hashedPassword,
       userData.password,
     );
 
-    if (!pwMatches) throw new UnauthorizedException('password is incorrect');
+    if (!pwMatches)
+      throw new UnauthorizedException(AuthErrors.passwordIsIncorrect);
     return this.getJwtToken(user.userId, user.email);
   }
 }

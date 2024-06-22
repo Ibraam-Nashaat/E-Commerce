@@ -3,6 +3,7 @@ import { AddProductDto } from './dto/addProduct.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddCouponDto } from './dto/addCoupon.dto';
 import { Coupons } from '@prisma/client';
+import { SellerErrors } from './errors/seller.errors';
 
 @Injectable()
 export class ProductService {
@@ -32,7 +33,7 @@ export class ProductService {
       });
     } catch (e) {
       if (e.code === 'P2002') {
-        throw new ConflictException('Coupon already exists');
+        throw new ConflictException(SellerErrors.couponExists);
       }
       throw e;
     }

@@ -7,22 +7,20 @@ import {
 } from '@nestjs/common';
 import { OrderStatus } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { OrderErrors } from './errors/order.errors';
 
 @Injectable()
 export class OrderService {
   constructor(private prisma: PrismaService) {}
 
-  async applyCoupon(
-    coupon: string,
-    orderId: number,
-  ) {
+  async applyCoupon(coupon: string, orderId: number) {
     const couponData = await this.prisma.coupons.findUnique({
       where: {
         coupon: coupon,
       },
     });
 
-    if (!couponData) throw new NotFoundException('coupon not found');
+    if (!couponData) throw new NotFoundException(OrderErrors.couponNotFound);
 
     const order = await this.prisma.orders.findUnique({
       where: {
@@ -30,7 +28,7 @@ export class OrderService {
       },
     });
 
-    if (!order) throw new NotFoundException('no order exists with this id');
+    if (!order) throw new NotFoundException(OrderErrors.orderIdNotFound);
 
     const updatedOrder = await this.prisma.orders.update({
       where: {
@@ -97,7 +95,7 @@ export class OrderService {
     });
 
     if (cartItems.length == 0)
-      throw new BadRequestException("Can't create order from empty cart");
+      throw new BadRequestException(OrderErrors.emptyCart);
 
     const productMap = await this.checkForStockMismatch(cartItems);
     await this.addOrderItems(cartItems, productMap, userId);
@@ -126,7 +124,7 @@ export class OrderService {
 
     if (stockConflicts.length > 0) {
       throw new ConflictException({
-        error: 'One or more items exceed available stock.',
+        error: OrderErrors.cartItemsExceedStock,
         conflicts: stockConflicts.map((item) => ({
           productId: item.productId,
           availableStock: productMap[item.productId].stock,
@@ -181,7 +179,7 @@ export class OrderService {
       },
     });
 
-    if (!order) throw new NotFoundException('No order with this id exists');
+    if (!order) throw new NotFoundException(OrderErrors.orderIdNotFound);
 
     const orderItems = await this.prisma.orderItems.findMany({
       where: {
@@ -198,10 +196,7 @@ export class OrderService {
     };
   }
 
-  async updateOrderStatus(
-    orderId: number,
-    status: string,
-  ) {
+  async updateOrderStatus(orderId: number, status: string) {
     const statusEnum = this.parseOrderStatus(status);
 
     let order;
@@ -215,7 +210,7 @@ export class OrderService {
         },
       });
     } catch (e) {
-      throw new NotFoundException('No order with this id exists');
+      throw new NotFoundException(OrderErrors.orderIdNotFound);
     }
 
     return {
@@ -235,7 +230,7 @@ export class OrderService {
       case 'delivered':
         return 'Delivered';
       default:
-        throw new BadRequestException(`Invalid status: ${statusString}`);
+        throw new BadRequestException(OrderErrors.invalidOrderStatus);
     }
   }
 }

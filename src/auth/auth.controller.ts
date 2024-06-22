@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Req,
-} from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
@@ -17,6 +10,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { AuthErrors } from './errors/auth.errors';
 
 @ApiTags('Auth')
 @Controller('api/auth')
@@ -25,22 +19,22 @@ export class AuthController {
 
   @ApiBadRequestResponse({
     description: [
-      'name must be a string',
-      'name should not be empty',
-      'email should not be empty',
-      'email must be an email',
-      'password must be a string',
-      'password should not be empty',
-      'phone must be a valid phone number',
-      'phone should not be empty',
-      'address should not be empty',
+      AuthErrors.nameIsNotString,
+      AuthErrors.nameIsEmpty,
+      AuthErrors.emailIsEmpty,
+      AuthErrors.emailMustFollowEmailFormat,
+      AuthErrors.passwordIsNotString,
+      AuthErrors.passwordIsEmpty,
+      AuthErrors.phoneMustBeValid,
+      AuthErrors.phoneIsEmpty,
+      AuthErrors.addressIsEmpty,
     ].join('<br>'),
   })
   @ApiCreatedResponse({
     description: 'signed up successfully',
   })
   @ApiConflictResponse({
-    description: ['email already exists', 'phone number already exists'].join(
+    description: [AuthErrors.emailExists, AuthErrors.phoneNumberExists].join(
       '<br>',
     ),
   })
@@ -51,17 +45,17 @@ export class AuthController {
 
   @ApiBadRequestResponse({
     description: [
-      'email should not be empty',
-      'email must be an email',
-      'password must be a string',
-      'password should not be empty',
+      AuthErrors.emailIsEmpty,
+      AuthErrors.emailMustFollowEmailFormat,
+      AuthErrors.passwordIsNotString,
+      AuthErrors.passwordIsEmpty,
     ].join('<br>'),
   })
   @ApiNotFoundResponse({
-    description: 'email not found',
+    description: AuthErrors.emailNotFound,
   })
   @ApiUnauthorizedResponse({
-    description: 'password is incorrect',
+    description: AuthErrors.passwordIsIncorrect,
   })
   @ApiCreatedResponse({
     description: 'signed in successfully',

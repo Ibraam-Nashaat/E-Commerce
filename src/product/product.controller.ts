@@ -8,6 +8,7 @@ import {
   ApiCreatedResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { SellerErrors } from './errors/seller.errors';
 
 @ApiTags('Sellers')
 @Controller('api/')
@@ -16,16 +17,16 @@ export class ProductController {
 
   @ApiBadRequestResponse({
     description: [
-      'name must be a string',
-      'name should not be empty',
-      'description should not be empty',
-      'description must be a string',
-      'price must be a number conforming to the specified constraints',
-      'price should not be empty',
-      'stock must be a number conforming to the specified constraints',
-      'stock should not be empty',
-      'category must be a string',
-      'category should not be empty',
+      SellerErrors.nameNotString,
+      SellerErrors.nameIsEmpty,
+      SellerErrors.descriptionIsEmpty,
+      SellerErrors.descriptionNotString,
+      SellerErrors.priceIsNotNumber,
+      SellerErrors.priceIsEmpty,
+      SellerErrors.stockIsNotNumber,
+      SellerErrors.stockIsEmpty,
+      SellerErrors.categoryIsNotString,
+      SellerErrors.categoryIsEmpty,
     ].join('<br>'),
   })
   @ApiCreatedResponse({ description: 'product added successfully' })
@@ -35,14 +36,14 @@ export class ProductController {
   }
 
   @ApiConflictResponse({
-    description: 'Coupon already exists',
+    description: SellerErrors.couponExists,
   })
   @ApiBadRequestResponse({
     description: [
-      'coupon should not be empty',
-      'coupon must be a string',
-      'discount must be a number conforming to the specified constraints',
-      'discount should not be empty',
+      SellerErrors.couponIsEmpty,
+      SellerErrors.couponIsNotString,
+      SellerErrors.discountIsNotNumber,
+      SellerErrors.discountIsEmpty,
     ].join('<br>'),
   })
   @ApiCreatedResponse({

@@ -22,7 +22,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CartErrors } from './errors';
+import { CartErrors } from './errors/cart.errors';
 
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: 'unauthorized' })
@@ -42,14 +42,14 @@ export class CartController {
 
   @ApiBadRequestResponse({
     description: [
-      CartErrors.productIdIsNotNumberError,
-      CartErrors.productIdIsEmptyError,
-      CartErrors.quantityIsNotNumberError,
-      CartErrors.quantityIsEmptyError,
+      CartErrors.productIdIsNotNumber,
+      CartErrors.productIdIsEmpty,
+      CartErrors.quantityIsNotNumber,
+      CartErrors.quantityIsEmpty,
     ].join('<br>'),
   })
   @ApiNotFoundResponse({
-    description: CartErrors.productNotFoundError,
+    description: CartErrors.productNotFound,
   })
   @ApiCreatedResponse({
     description: 'product added to cart successfully',
@@ -61,16 +61,16 @@ export class CartController {
 
   @ApiBadRequestResponse({
     description: [
-      CartErrors.productIdIsNotNumberError,
-      CartErrors.productIdIsEmptyError,
-      CartErrors.quantityIsNotNumberError,
-      CartErrors.quantityIsEmptyError,
+      CartErrors.productIdIsNotNumber,
+      CartErrors.productIdIsEmpty,
+      CartErrors.quantityIsNotNumber,
+      CartErrors.quantityIsEmpty,
     ].join('<br>'),
   })
   @ApiNotFoundResponse({
     description: [
-      CartErrors.productNotFoundError,
-      CartErrors.productNotFoundInCartError,
+      CartErrors.productNotFound,
+      CartErrors.productNotFoundInCart,
     ].join('<br>'),
   })
   @ApiOkResponse({ description: 'cart updated successfully' })
@@ -81,12 +81,12 @@ export class CartController {
 
   @ApiBadRequestResponse({
     description: [
-      CartErrors.productIdIsEmptyError,
-      CartErrors.productIdIsNotNumberError,
+      CartErrors.productIdIsEmpty,
+      CartErrors.productIdIsNotNumber,
     ].join('<br>'),
   })
   @ApiNotFoundResponse({
-    description: CartErrors.productNotFoundInCartError,
+    description: CartErrors.productNotFoundInCart,
   })
   @ApiOkResponse({
     description: 'product removed from cart successfully',
