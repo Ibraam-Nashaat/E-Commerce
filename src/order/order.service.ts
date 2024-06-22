@@ -8,6 +8,8 @@ import {
 import { OrderStatus } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { OrderErrors } from './errors/order.errors';
+import { OrderActionResponseDto } from './dto/orderActionResponse.dto';
+import { GetOrderResponseDto } from './dto/getOrderResponse.dto';
 
 @Injectable()
 export class OrderService {
@@ -30,14 +32,15 @@ export class OrderService {
 
     if (!order) throw new NotFoundException(OrderErrors.orderIdNotFound);
 
-    const updatedOrder = await this.prisma.orders.update({
-      where: {
-        orderId: orderId,
-      },
-      data: {
-        total: Math.max(order.total - couponData.discount, 0),
-      },
-    });
+    const updatedOrder: OrderActionResponseDto =
+      await this.prisma.orders.update({
+        where: {
+          orderId: orderId,
+        },
+        data: {
+          total: Math.max(order.total - couponData.discount, 0),
+        },
+      });
 
     return updatedOrder;
   }
@@ -63,7 +66,8 @@ export class OrderService {
     for (let i = 0; i < orders.length; i++) {
       ordersHistory[orders[i].orderId] = {
         orderId: orders[i].orderId,
-        date: orders[i].orderDate,
+        userId: orders[i].userId,
+        orderDate: orders[i].orderDate,
         status: orders[i].status,
         total: orders[i].total,
         items: [],
@@ -78,7 +82,8 @@ export class OrderService {
       });
     }
 
-    return Object.values(ordersHistory);
+    const response: GetOrderResponseDto[] = Object.values(ordersHistory);
+    return response;
   }
 
   async createOrder(userId: number) {
@@ -187,19 +192,22 @@ export class OrderService {
       },
     });
 
-    return {
-      id: orderId,
-      date: order.orderDate,
+    const response: GetOrderResponseDto = {
+      orderId: orderId,
+      userId: order.userId,
+      orderDate: order.orderDate,
       status: order.status,
       total: order.total,
       items: orderItems,
     };
+
+    return response;
   }
 
   async updateOrderStatus(orderId: number, status: string) {
     const statusEnum = this.parseOrderStatus(status);
 
-    let order;
+    let order: OrderActionResponseDto;
     try {
       order = await this.prisma.orders.update({
         where: {
@@ -213,12 +221,7 @@ export class OrderService {
       throw new NotFoundException(OrderErrors.orderIdNotFound);
     }
 
-    return {
-      id: orderId,
-      date: order.orderDate,
-      status: order.status,
-      total: order.total,
-    };
+    return order;
   }
 
   private parseOrderStatus(statusString: string): OrderStatus {

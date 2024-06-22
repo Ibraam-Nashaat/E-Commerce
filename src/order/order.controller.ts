@@ -23,6 +23,9 @@ import {
 } from '@nestjs/swagger';
 import { UpdateOrderStatusRequestDto } from './dto/updateOrderStatusRequest.dto';
 import { OrderErrors } from './errors/order.errors';
+import { OrderActionResponseDto } from './dto/orderActionResponse.dto';
+import { type } from 'os';
+import { GetOrderResponseDto } from './dto/getOrderResponse.dto';
 
 @ApiUnauthorizedResponse({ description: 'unauthorized' })
 @ApiBearerAuth()
@@ -37,7 +40,10 @@ export class OrderController {
       '<br>',
     ),
   })
-  @ApiCreatedResponse({ description: 'coupon applied to order successfully' })
+  @ApiCreatedResponse({
+    description: 'coupon applied to order successfully',
+    type: OrderActionResponseDto,
+  })
   @Post('/orders/apply-coupon')
   applyCoupon(@Body() data: ApplyCouponRequestDto) {
     return this.orderService.applyCoupon(data.coupon, data.orderId);
@@ -45,6 +51,8 @@ export class OrderController {
 
   @ApiOkResponse({
     description: 'orders history retrieved successfully',
+    type: GetOrderResponseDto,
+    isArray: true,
   })
   @Get('/users/orders')
   getOrdersHistory(@Request() req) {
@@ -66,7 +74,10 @@ export class OrderController {
   @ApiNotFoundResponse({
     description: OrderErrors.orderIdNotFound,
   })
-  @ApiOkResponse({ description: 'order was retrieved successfully' })
+  @ApiOkResponse({
+    description: 'order was retrieved successfully',
+    type: GetOrderResponseDto,
+  })
   @Get('orders/:orderId')
   getOrder(@Param('orderId') orderId: string) {
     return this.orderService.getOrder(Number(orderId));
@@ -76,7 +87,10 @@ export class OrderController {
     description: OrderErrors.orderIdNotFound,
   })
   @ApiBadRequestResponse({ description: OrderErrors.invalidOrderStatus })
-  @ApiOkResponse({ description: 'order status updated successfully' })
+  @ApiOkResponse({
+    description: 'order status updated successfully',
+    type: OrderActionResponseDto,
+  })
   @Put('orders/:orderId/status')
   updateOrderStatus(
     @Param('orderId') orderId: string,
