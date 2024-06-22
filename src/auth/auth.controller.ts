@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUpDto } from './dto/signup.dto';
-import { SignInDto } from './dto/signin.dto';
+import { SignUpRequestDto } from './dto/signUpRequest.dto';
+import { SignInRequestDto } from './dto/signInRequest.dto';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -11,12 +11,16 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthErrors } from './errors/auth.errors';
+import { AuthResponseDto } from './dto/authResponse.dto';
 
 @ApiTags('Auth')
 @Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-
+  @ApiCreatedResponse({
+    description: 'User created successfully',
+    type: AuthResponseDto,
+  })
   @ApiBadRequestResponse({
     description: [
       AuthErrors.nameIsNotString,
@@ -30,16 +34,13 @@ export class AuthController {
       AuthErrors.addressIsEmpty,
     ].join('<br>'),
   })
-  @ApiCreatedResponse({
-    description: 'signed up successfully',
-  })
   @ApiConflictResponse({
     description: [AuthErrors.emailExists, AuthErrors.phoneNumberExists].join(
       '<br>',
     ),
   })
   @Post('signup')
-  signUp(@Body() userData: SignUpDto) {
+  signUp(@Body() userData: SignUpRequestDto) {
     return this.authService.signup(userData);
   }
 
@@ -58,10 +59,11 @@ export class AuthController {
     description: AuthErrors.passwordIsIncorrect,
   })
   @ApiCreatedResponse({
-    description: 'signed in successfully',
+    description: 'Signed in successfully',
+    type: AuthResponseDto,
   })
   @Post('signin')
-  signIn(@Body() userData: SignInDto) {
+  signIn(@Body() userData: SignInRequestDto) {
     return this.authService.signin(userData);
   }
 }

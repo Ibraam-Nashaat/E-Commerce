@@ -5,13 +5,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SignUpDto } from './dto/signup.dto';
+import { SignUpRequestDto } from './dto/signUpRequest.dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { SignInDto } from './dto/signin.dto';
+import { SignInRequestDto } from './dto/signInRequest.dto';
 import { AuthErrors } from './errors/auth.errors';
+import { AuthResponseDto } from './dto/authResponse.dto';
 
 @Injectable()
 export class AuthService {
@@ -37,7 +38,7 @@ export class AuthService {
     };
   }
 
-  async signup(userData: SignUpDto) {
+  async signup(userData: SignUpRequestDto) {
     const hashedPassword = await argon.hash(userData.password);
     try {
       const user = await this.prisma.users.create({
@@ -56,7 +57,17 @@ export class AuthService {
         },
       });
 
-      return this.getJwtToken(user.userId, user.email);
+      const response: AuthResponseDto = {
+        userId: user.userId,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        createdAt: user.createdAt,
+        jwt: (await this.getJwtToken(user.userId, user.email)).jwt,
+      };
+
+      return response;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002' && error.meta?.target) {
@@ -74,7 +85,7 @@ export class AuthService {
     }
   }
 
-  async signin(userData: SignInDto) {
+  async signin(userData: SignInRequestDto) {
     const user = await this.prisma.users.findUnique({
       where: {
         email: userData.email,
@@ -90,6 +101,17 @@ export class AuthService {
 
     if (!pwMatches)
       throw new UnauthorizedException(AuthErrors.passwordIsIncorrect);
-    return this.getJwtToken(user.userId, user.email);
+
+    const response: AuthResponseDto = {
+      userId: user.userId,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+      createdAt: user.createdAt,
+      jwt: (await this.getJwtToken(user.userId, user.email)).jwt,
+    };
+
+    return response;
   }
 }

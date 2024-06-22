@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class ApplyCouponDto {
+export class ApplyCouponRequestDto {
   @ApiProperty({
     description: 'The Coupon string',
     example: 'Slash200',

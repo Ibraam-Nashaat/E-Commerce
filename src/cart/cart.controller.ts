@@ -9,10 +9,10 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { AddOrUpdateProductDto } from './dto/addOrUpdateProduct.dto';
+import { AddOrUpdateProductRequestDto } from './dto/addOrUpdateProductRequest.dto';
 import { CartService } from './cart.service';
 import { AuthGuard } from '@nestjs/passport';
-import { RemoveProductFromCartDto } from './dto/removeProductFromCart.dto';
+import { RemoveProductFromCartRequestDto } from './dto/removeProductFromCartRequest.dto';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -23,6 +23,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { CartErrors } from './errors/cart.errors';
+import { GetCartItemsResponseDto } from './dto/getCartItemsResponse.dto';
 
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: 'unauthorized' })
@@ -34,6 +35,8 @@ export class CartController {
 
   @ApiOkResponse({
     description: 'cart items retrieved successfully',
+    type: GetCartItemsResponseDto,
+    isArray: true,
   })
   @Get()
   getCartItems(@Request() req) {
@@ -53,9 +56,10 @@ export class CartController {
   })
   @ApiCreatedResponse({
     description: 'product added to cart successfully',
+    type: GetCartItemsResponseDto,
   })
   @Post('/add')
-  addToCart(@Body() productData: AddOrUpdateProductDto, @Request() req) {
+  addToCart(@Body() productData: AddOrUpdateProductRequestDto, @Request() req) {
     return this.cartService.addToCart(productData, req.user.userId);
   }
 
@@ -73,9 +77,15 @@ export class CartController {
       CartErrors.productNotFoundInCart,
     ].join('<br>'),
   })
-  @ApiOkResponse({ description: 'cart updated successfully' })
+  @ApiOkResponse({
+    description: 'cart updated successfully',
+    type: GetCartItemsResponseDto,
+  })
   @Put('/update')
-  updateCart(@Body() productData: AddOrUpdateProductDto, @Request() req) {
+  updateCart(
+    @Body() productData: AddOrUpdateProductRequestDto,
+    @Request() req,
+  ) {
     return this.cartService.updateCart(productData, req.user.userId);
   }
 
@@ -93,7 +103,7 @@ export class CartController {
   })
   @Delete('/remove')
   removeProductFromCart(
-    @Body() productData: RemoveProductFromCartDto,
+    @Body() productData: RemoveProductFromCartRequestDto,
     @Request() req,
   ) {
     return this.cartService.removeProductFromCart(productData, req.user.userId);

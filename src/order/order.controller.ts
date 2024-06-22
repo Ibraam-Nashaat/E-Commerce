@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ApplyCouponDto } from './dto/applyCoupon.dto';
+import { ApplyCouponRequestDto } from './dto/applyCouponRequest.dto';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -21,7 +21,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { UpdateOrderStatusDto } from './dto/updateOrderStatus.dto';
+import { UpdateOrderStatusRequestDto } from './dto/updateOrderStatusRequest.dto';
 import { OrderErrors } from './errors/order.errors';
 
 @ApiUnauthorizedResponse({ description: 'unauthorized' })
@@ -39,7 +39,7 @@ export class OrderController {
   })
   @ApiCreatedResponse({ description: 'coupon applied to order successfully' })
   @Post('/orders/apply-coupon')
-  applyCoupon(@Body() data: ApplyCouponDto) {
+  applyCoupon(@Body() data: ApplyCouponRequestDto) {
     return this.orderService.applyCoupon(data.coupon, data.orderId);
   }
 
@@ -80,7 +80,7 @@ export class OrderController {
   @Put('orders/:orderId/status')
   updateOrderStatus(
     @Param('orderId') orderId: string,
-    @Body() status: UpdateOrderStatusDto,
+    @Body() status: UpdateOrderStatusRequestDto,
   ) {
     return this.orderService.updateOrderStatus(Number(orderId), status.status);
   }

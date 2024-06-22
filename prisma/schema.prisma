@@ -21,7 +21,7 @@ model Users {
   phone      String    @unique
   hashedPassword   String
   address    String
-  created_at DateTime  @default(now())
+  createdAt DateTime  @default(now())
   cart       Carts?     
   orders     Orders[]
 }
@@ -33,7 +33,7 @@ model Products {
   price      Float
   stock      Int
   category   String
-  created_at DateTime  @default(now())
+  createdAt  DateTime  @default(now())
   cartItems  CartItems[]
   orderItems OrderItems[]
 }
@@ -67,7 +67,7 @@ enum OrderStatus {
 model Carts {
   cartId     Int       @id @default(autoincrement())
   userId     Int @unique
-  created_at DateTime  @default(now())
+  createdAt  DateTime  @default(now())
   user       Users      @relation(fields: [userId], references: [userId])
   cartItems  CartItems[]
 }

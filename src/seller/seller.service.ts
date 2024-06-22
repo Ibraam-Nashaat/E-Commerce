@@ -1,15 +1,17 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { AddProductDto } from './dto/addProduct.dto';
+import { AddProductRequestDto } from './dto/addProductRequest.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AddCouponDto } from './dto/addCoupon.dto';
+import { AddCouponRequestDto } from './dto/addCouponRequest.dto';
 import { Coupons } from '@prisma/client';
 import { SellerErrors } from './errors/seller.errors';
+import { AddProductResponseDto } from './dto/addProductResponse.dto';
+import { AddCouponResponseDto } from './dto/addCouponResponse.dto';
 
 @Injectable()
 export class SellerService {
   constructor(private prisma: PrismaService) {}
-  async addProduct(productData: AddProductDto) {
-    const product = await this.prisma.products.create({
+  async addProduct(productData: AddProductRequestDto) {
+    const product: AddProductResponseDto = await this.prisma.products.create({
       data: {
         name: productData.name,
         description: productData.description,
@@ -22,8 +24,8 @@ export class SellerService {
     return product;
   }
 
-  async addCoupon(couponData: AddCouponDto) {
-    let coupon: Coupons;
+  async addCoupon(couponData: AddCouponRequestDto) {
+    let coupon: AddCouponResponseDto;
     try {
       coupon = await this.prisma.coupons.create({
         data: {

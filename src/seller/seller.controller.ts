@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { AddProductDto } from './dto/addProduct.dto';
+import { AddProductRequestDto } from './dto/addProductRequest.dto';
 import { SellerService } from './seller.service';
-import { AddCouponDto } from './dto/addCoupon.dto';
+import { AddCouponRequestDto } from './dto/addCouponRequest.dto';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -9,6 +9,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { SellerErrors } from './errors/seller.errors';
+import { AddProductResponseDto } from './dto/addProductResponse.dto';
+import { AddCouponResponseDto } from './dto/addCouponResponse.dto';
 
 @ApiTags('Sellers')
 @Controller('api/')
@@ -29,9 +31,12 @@ export class SellerController {
       SellerErrors.categoryIsEmpty,
     ].join('<br>'),
   })
-  @ApiCreatedResponse({ description: 'product added successfully' })
+  @ApiCreatedResponse({
+    description: 'product added successfully',
+    type: AddProductResponseDto,
+  })
   @Post('products/add')
-  addProduct(@Body() productData: AddProductDto) {
+  addProduct(@Body() productData: AddProductRequestDto) {
     return this.sellerService.addProduct(productData);
   }
 
@@ -48,9 +53,10 @@ export class SellerController {
   })
   @ApiCreatedResponse({
     description: 'coupon added successfully',
+    type: AddCouponResponseDto,
   })
   @Post('coupons/add')
-  addCoupon(@Body() couponData: AddCouponDto) {
+  addCoupon(@Body() couponData: AddCouponRequestDto) {
     return this.sellerService.addCoupon(couponData);
   }
 }
