@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { AddProductRequestDto } from './dto/addProductRequest.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { AddCouponRequestDto } from './dto/addCouponRequest.dto';
 import { Coupons } from '@prisma/client';
 import { SellerErrors } from './errors/seller.errors';

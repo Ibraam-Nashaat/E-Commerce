@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { OrderStatus } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { OrderErrors } from './errors/order.errors';
 import { OrderActionResponseDto } from './dto/orderActionResponse.dto';
 import { GetOrderResponseDto } from './dto/getOrderResponse.dto';

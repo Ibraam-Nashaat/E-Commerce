@@ -4,7 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { AddOrUpdateProductRequestDto } from './dto/addOrUpdateProductRequest.dto';
 import { RemoveProductFromCartRequestDto } from './dto/removeProductFromCartRequest.dto';
 import { CartErrors } from './errors/cart.errors';

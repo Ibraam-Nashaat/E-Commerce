@@ -4,7 +4,6 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { SignUpRequestDto } from './dto/signUpRequest.dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -13,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import { SignInRequestDto } from './dto/signInRequest.dto';
 import { AuthErrors } from './errors/auth.errors';
 import { AuthResponseDto } from './dto/authResponse.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
